@@ -1,0 +1,24 @@
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+        email VARCHAR(30) NOT NULL PRIMARY KEY,
+        password VARCHAR(30) NOT NULL,
+        firstname VARCHAR(30) NOT NULL,
+        familyname VARCHAR(30) NOT NULL,
+        gender VARCHAR(30) NOT NULL,
+        city VARCHAR(30) NOT NULL,
+        country VARCHAR(30) NOT NULL
+        );
+
+DROP TABLE IF EXISTS messages;
+CREATE TABLE messages (
+        message TEXT NOT NULL,
+        from VARCHAR(30) NOT NULL,
+        to VARCHAR(30) NOT NULL
+        );
+
+
+DROP TABLE IF EXISTS loggedIn;
+CREATE TABLE loggedIn (
+        token TEXT NOT NULL PRIMARY KEY,
+        email VARCHAR(30) NOT NULL
+        );
