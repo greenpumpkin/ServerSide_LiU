@@ -22,8 +22,7 @@ def insert_user(email,password,firstname,familyname,gender,city,country):
     cursor = conn.cursor()
     user = (email,password,firstname,familyname,gender,city,country)
     try:
-        add_user = "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)"
-        cursor.execute(add_user,user)
+        cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", user)
         conn.commit()
     except:
         return False

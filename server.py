@@ -5,17 +5,19 @@ import json
 app = Flask(__name__)
 app.debug = True
 
-#@app.route('/')
-#def hello_world():
-#    return "Hello World !"
-
 @app.before_request
 def before_request():
+    database_helper.init_db()
     database_helper.connect_db()
+
 
 @app.teardown_request
 def teardown_request(exception):
     database_helper.close_db()
+
+@app.route('/')
+def hello_world():
+    return "Hello World !"
 
 #Authenticates the username by the provided password
 @app.route('/signin', methods=['POST'])
