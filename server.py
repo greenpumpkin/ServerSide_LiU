@@ -9,6 +9,14 @@ app.debug = True
 #def hello_world():
 #    return "Hello World !"
 
+@app.before_request
+def before_request():
+    database_helper.connect_db()
+
+@app.teardown_request
+def teardown_request(exception):
+    database_helper.close_db()
+
 #Authenticates the username by the provided password
 @app.route('/signin', methods=['POST'])
 def sign_in(email,password):
