@@ -29,8 +29,11 @@ def get_user(email,password):
     conn = connect_db()
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT email,password FROM users WHERE email=(?) AND password=(?)", (email), (password))
-
+        cursor.execute('SELECT email,password FROM users WHERE email=(?) AND password=(?)', [email, password])
+        token = create_token()
+        cursor.execute("INSERT INTO loggedIn VALUES (?, ?)", [token, email])
+        conn.commit()
+        return{"success": True, "message" : "connected"}
     except:
         return {"success": False, "message" : "Wrong username or password."}
 
@@ -39,7 +42,7 @@ def create_token():
     ab = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     token = ''
     for i in range(0, 36):
-        token += ab[int(math.floor(random.randint(0,len(ab))))]
+        token += ab[random.randint(0,len(ab)-1)]
     return token
 
 #Insert a user in the database
