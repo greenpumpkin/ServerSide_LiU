@@ -1,4 +1,6 @@
 import sqlite3
+import random, math
+import string
 from flask import g, app
 
 
@@ -16,6 +18,30 @@ def get_db():
         db = g._database = connect_db()
     return db
 
+#Close a database
+def close_db():
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
+
+#Get a user in the database
+def get_user(email,password):
+    conn = connect_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT email,password FROM users WHERE email=(?) AND password=(?)", (email), (password))
+
+    except:
+        return {"success": False, "message" : "Wrong username or password."}
+
+#Creates a random token
+def create_token():
+    ab = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    token = ''
+    for i in range(0, 36):
+        token += ab[int(math.floor(random.randint(0,len(ab))))]
+    return token
+
 #Insert a user in the database
 def insert_user(email,password,firstname,familyname,gender,city,country):
     conn = connect_db()
@@ -27,12 +53,6 @@ def insert_user(email,password,firstname,familyname,gender,city,country):
     except:
         return False
     return True
-
-#Close a database
-def close_db():
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
 
 #Creates the database based on database.schema
 def init_db():

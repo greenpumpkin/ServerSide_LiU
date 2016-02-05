@@ -22,6 +22,7 @@ def hello_world():
 def sign_in(email,password):
     email = request.form['email']
     password = request.form['password']
-
+    
 if __name__ == '__main__':
-    #database_helper.init_db()
+    app.run()
+    database_helper.init_db()
