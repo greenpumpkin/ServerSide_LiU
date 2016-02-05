@@ -7,9 +7,7 @@ app.debug = True
 
 @app.before_request
 def before_request():
-    database_helper.init_db()
     database_helper.connect_db()
-
 
 @app.teardown_request
 def teardown_request(exception):
@@ -24,3 +22,6 @@ def hello_world():
 def sign_in(email,password):
     email = request.form['email']
     password = request.form['password']
+
+if __name__ == '__main__':
+    #database_helper.init_db()
