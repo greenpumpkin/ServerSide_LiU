@@ -1,6 +1,5 @@
 import sqlite3
-import random, math
-import string
+import random
 from flask import g, app
 
 
@@ -25,17 +24,17 @@ def close_db():
         db.close()
 
 #Get a user in the database
-def get_user(email,password):
-    conn = connect_db()
-    cursor = conn.cursor()
-    try:
-        cursor.execute('SELECT email,password FROM users WHERE email=(?) AND password=(?)', [email, password])
-        token = create_token()
-        cursor.execute("INSERT INTO loggedIn VALUES (?, ?)", [token, email])
-        conn.commit()
-        return{"success": True, "message" : "connected"}
-    except:
-        return {"success": False, "message" : "Wrong username or password."}
+#def get_user(email,password):
+ #   conn = connect_db()
+  #  cursor = conn.cursor()
+   # try:
+    #    cursor.execute('SELECT email,password FROM users WHERE email=(?) AND password=(?)', [email, password])
+     #   token = create_token()
+      #  cursor.execute("INSERT INTO loggedIn VALUES (?, ?)", [token, email])
+       # conn.commit()
+       # return{"success": True, "message" : "connected"}
+    # except:
+     #   return {"success": False, "message" : "Wrong username or password."}
 
 #Creates a random token
 def create_token():
@@ -46,19 +45,19 @@ def create_token():
     return token
 
 #Insert a user in the database
-def insert_user(email,password,firstname,familyname,gender,city,country):
-    conn = connect_db()
-    cursor = conn.cursor()
-    user = (email,password,firstname,familyname,gender,city,country)
-    try:
-        cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", user)
-        conn.commit()
-    except:
-        return False
-    return True
+##def insert_user(email,password,firstname,familyname,gender,city,country):
+ #   conn = connect_db()
+   #  cursor = conn.cursor()
+     #user = (email,password,firstname,familyname,gender,city,country)
+     #try:
+       #  cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", user)
+         #conn.commit()
+     #except:
+       #  return False
+     #return True
 
 #Creates the database based on database.schema
-def init_db():
+def init_db(app):
     with app.app_context():
         db = get_db()
         with app.open_resource('database.schema', mode='r') as f:

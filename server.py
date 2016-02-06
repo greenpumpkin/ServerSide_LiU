@@ -1,4 +1,5 @@
-from flask import Flask, app, request
+from flask import app, request
+from flask import Flask
 import database_helper
 import json
 
@@ -25,4 +26,5 @@ def sign_in(email,password):
     
 if __name__ == '__main__':
     app.run()
-    database_helper.init_db()
+    database_helper.init_db(app)
+
