@@ -1,5 +1,4 @@
 import sqlite3
-import random
 from flask import g, app
 
 
@@ -23,38 +22,16 @@ def close_db():
     if db is not None:
         db.close()
 
-#Get a user in the database
-#def get_user(email,password):
- #   conn = connect_db()
-  #  cursor = conn.cursor()
-   # try:
-    #    cursor.execute('SELECT email,password FROM users WHERE email=(?) AND password=(?)', [email, password])
-     #   token = create_token()
-      #  cursor.execute("INSERT INTO loggedIn VALUES (?, ?)", [token, email])
-       # conn.commit()
-       # return{"success": True, "message" : "connected"}
-    # except:
-     #   return {"success": False, "message" : "Wrong username or password."}
-
-#Creates a random token
-def create_token():
-    ab = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    token = ''
-    for i in range(0, 36):
-        token += ab[random.randint(0,len(ab)-1)]
-    return token
-
 #Insert a user in the database
-##def insert_user(email,password,firstname,familyname,gender,city,country):
- #   conn = connect_db()
-   #  cursor = conn.cursor()
-     #user = (email,password,firstname,familyname,gender,city,country)
-     #try:
-       #  cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", user)
-         #conn.commit()
-     #except:
-       #  return False
-     #return True
+def insert_user(email,password,firstname,familyname,gender,city,country):
+     db = get_db()
+     user = (email,password,firstname,familyname,gender,city,country)
+     try:
+      db.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", user)
+     except:
+         return False
+     db.commit()
+     return True
 
 #Creates the database based on database.schema
 def init_db(app):
