@@ -21,9 +21,30 @@ def hello_world():
 
 #Authenticates the username by the provided password
 @app.route('/signin', methods=['POST'])
-def sign_in(email,password):
+def sign_in():
     email = request.form['email']
     password = request.form['password']
+    signIn = database_helper.sign_in_db(email,password)
+    if signIn == True:
+        token = create_token()
+        return json.dumps([{'success': True, 'message': "Login successful!", 'token': token}])
+    else:
+       return json.dumps([{'success': False, 'message': '''Wrong email or password'''}])
+
+@app.route('/signup', methods=['POST'])
+def sign_up():
+    email = request.form['email']
+    password = request.form['password']
+    firstname = request.form['firstname']
+    familyname = request.form['familyname']
+    gender = request.form['gender']
+    city = request.form['city']
+    country = request.form['country']
+    signUp = database_helper.insert_user(email,password,firstname,familyname,gender, city, country)
+    if signUp == True:
+        return json.dumps([{"success": True, "message": "Successfully created a new user."}])
+    else:
+        return json.dumps([{"success": False, "message": "Form data missing or incorrect type."}])
 
 #Creates a random token
 def create_token():
@@ -35,5 +56,4 @@ def create_token():
     
 if __name__ == '__main__':
     app.run()
-    database_helper.init_db(app)
-    database_helper.insert_user('email','password','firstname','familyname','gender','city','country')
+    #database_helper.init_db(app)

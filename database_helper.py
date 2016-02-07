@@ -22,16 +22,29 @@ def close_db():
     if db is not None:
         db.close()
 
-#Insert a user in the database
+#Inserts a user in the database when signing up
 def insert_user(email,password,firstname,familyname,gender,city,country):
      db = get_db()
      user = (email,password,firstname,familyname,gender,city,country)
      try:
-      db.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)", user)
+      db.execute('INSERT INTO users (email,password,firstname,familyname,gender,city,country) VALUES (?, ?, ?, ?, ?, ?, ?)', user)
      except:
          return False
      db.commit()
      return True
+
+#Inserts a user in the database when signing in
+def sign_in_db(email,password):
+    db = get_db()
+    user = (email,password)
+    request = db.execute('SELECT * FROM users WHERE email=(?) AND password=(?)', user)
+    try:
+        #Retrieving a single matching row,
+        request.fetchone()
+    except:
+        return False
+    db.commit()
+    return True
 
 #Creates the database based on database.schema
 def init_db(app):
