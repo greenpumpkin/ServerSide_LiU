@@ -27,24 +27,30 @@ def insert_user(email,password,firstname,familyname,gender,city,country):
      db = get_db()
      user = (email,password,firstname,familyname,gender,city,country)
      try:
-      db.execute('INSERT INTO users (email,password,firstname,familyname,gender,city,country) VALUES (?, ?, ?, ?, ?, ?, ?)', user)
+      db.execute('INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)', user)
      except:
          return False
      db.commit()
      return True
 
 #Inserts a user in the database when signing in
-def sign_in_db(email,password):
+def sign_in_db(email):
     db = get_db()
-    user = (email,password)
-    request = db.execute('SELECT * FROM users WHERE email=(?) AND password=(?)', user)
+    cursor = db.cursor()
     try:
-        #Retrieving a single matching row,
-        request.fetchone()
-    except:
+        request = cursor.execute('SELECT * FROM users WHERE email=?',(email,))
+        db.commit()
+        return request.fetchone()
+    except sqlite3.Error:
         return False
+
+def add_logged_in(token,email):
+    db = get_db()
+    cursor = db.cursor()
+    user = (token,email)
+    cursor.execute('INSERT INTO loggedIn VALUES (?, ?)', user)
     db.commit()
-    return True
+    close_db()
 
 #Creates the database based on database.schema
 def init_db(app):
