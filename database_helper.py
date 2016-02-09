@@ -34,16 +34,17 @@ def insert_user(email,password,firstname,familyname,gender,city,country):
      return True
 
 #Inserts a user in the database when signing in
-def sign_in_db(email):
+def sign_in_db(email,password):
     db = get_db()
     cursor = db.cursor()
+    user = (email,password)
     try:
-        request = cursor.execute('SELECT * FROM users WHERE email=?',(email,))
-        db.commit()
+        request = cursor.execute('SELECT * FROM users WHERE email=? AND password=?',user)
         return request.fetchone()
     except sqlite3.Error:
         return False
 
+#Inserts a logged-in user in the database
 def add_logged_in(token,email):
     db = get_db()
     cursor = db.cursor()
@@ -51,6 +52,74 @@ def add_logged_in(token,email):
     cursor.execute('INSERT INTO loggedIn VALUES (?, ?)', user)
     db.commit()
     close_db()
+
+#Get a user who is logged in
+def get_logged_in(token):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        request = cursor.execute('SELECT * FROM loggedIn WHERE token=?', (token,))
+        return request.fetchone()
+    except sqlite3.Error:
+        return False
+
+#Checks if a password is valid for a user willing to change it
+def check_pwd(email,password):
+    db = get_db()
+    cursor = db.cursor()
+    pwd = cursor.execute('SELECT password FROM users WHERE email=?', email)
+    fetch = pwd.fetchone()
+    if (fetch[0] == password):
+        return True
+    return False
+
+#Signs out a user from the system
+def sign_out_db(token):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        request = cursor.execute('SELECT * FROM loggedIn WHERE token=?', (token,))
+        return request.fetchone()
+    except sqlite3.Error:
+        return False
+
+#Removes a user from the loggedIn table in the database
+def remove_logged_in(token):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('DELETE FROM loggedIn WHERE token=?', (token,))
+    db.commit()
+    close_db()
+
+#Get data of a user in the database from the token
+def get_user_data_by_token(token):
+    db = get_db()
+    cursor = db.cursor()
+    mail = get_email(token)
+    try:
+        request = cursor.execute('SELECT email,firstname,familyname,gender,city,country FROM users WHERE email=?', (mail[0],))
+        return request.fetchone()
+    except sqlite3.Error:
+        return False
+
+#Modify the password in the database
+def modify_pwd(email, pwd, newPwd):
+    db = get_db()
+    cursor = db.cursor()
+    user = (newPwd,email,pwd)
+    cursor.execute('UPDATE users SET password=? WHERE email=? AND password=?', user)
+    db.commit()
+    db.close()
+
+#Get the email from the token
+def get_email(token):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        request = cursor.execute('SELECT email FROM loggedIn WHERE token=?', (token,))
+        return request.fetchone()
+    except sqlite3.Error:
+        return False
 
 #Creates the database based on database.schema
 def init_db(app):
