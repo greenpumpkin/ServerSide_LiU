@@ -74,22 +74,20 @@ def change_password():
     token = request.form['token']
     pwd = request.form['pwd']
     chgPwd = request.form['chgPwd']
-
     if not database_helper.get_logged_in(token):
         return json.dumps({'success': False, 'message': "You are not logged in."})
     else:
         if len(chgPwd) < 6:
             return json.dumps({"success": False, "message": "Error: password must be at least 6 characters long"})
-
         email = database_helper.get_email(token)
         validLog = database_helper.check_pwd(email,pwd)
-
         if validLog == False:
             return json.dumps({'success': False, 'message': "Wrong password."})
-
         database_helper.modify_pwd(email[0],pwd,chgPwd)
         return json.dumps({'success': True, 'message': "Password changed."})
 
+#Retrieves the stored data for the user whom the passed token is issued for.
+#The currently signed-in user case use this method to retrieve all its own info from the server
 @app.route('/getuserdatabytoken/<token>', methods=['GET'])
 def get_user_data_by_token(token):
     if (database_helper.get_logged_in(token)):
@@ -98,6 +96,18 @@ def get_user_data_by_token(token):
             return json.dumps({"success": True, "message": "User data retrieved.", "data": data})
         return json.dumps({"success": False, "message": "No such user."})
     return json.dumps({"success": False, "message": "You are not signed in."})
+
+#Retrieves the stored data for the user specified by the email address
+@app.route('/getuserdatabyemail/<token>/<email>', methods=['GET'])
+def get_user_data_by_email(token,email):
+    if (database_helper.get_logged_in(token)):
+        data = database_helper.get_user_data_by_email(email)
+        if data is not None:
+            return json.dumps({"success": True, "message": "User data retrieved.", "data": data})
+        else:
+            return json.dumps({"success": False, "message": "No such user."})
+    else:
+        return json.dumps({"success": False, "message": "You are not signed in."})
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -22,16 +22,7 @@ def close_db():
     if db is not None:
         db.close()
 
-#Inserts a user in the database when signing up
-def insert_user(email,password,firstname,familyname,gender,city,country):
-     db = get_db()
-     user = (email,password,firstname,familyname,gender,city,country)
-     try:
-      db.execute('INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)', user)
-     except:
-         return False
-     db.commit()
-     return True
+######## DATABASE OPERATIONS ########
 
 #Inserts a user in the database when signing in
 def sign_in_db(email,password):
@@ -43,6 +34,17 @@ def sign_in_db(email,password):
         return request.fetchone()
     except sqlite3.Error:
         return False
+
+#Inserts a user in the database when signing up
+def insert_user(email,password,firstname,familyname,gender,city,country):
+     db = get_db()
+     user = (email,password,firstname,familyname,gender,city,country)
+     try:
+      db.execute('INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)', user)
+     except:
+         return False
+     db.commit()
+     return True
 
 #Inserts a logged-in user in the database
 def add_logged_in(token,email):
@@ -91,17 +93,6 @@ def remove_logged_in(token):
     db.commit()
     close_db()
 
-#Get data of a user in the database from the token
-def get_user_data_by_token(token):
-    db = get_db()
-    cursor = db.cursor()
-    mail = get_email(token)
-    try:
-        request = cursor.execute('SELECT email,firstname,familyname,gender,city,country FROM users WHERE email=?', (mail[0],))
-        return request.fetchone()
-    except sqlite3.Error:
-        return False
-
 #Modify the password in the database
 def modify_pwd(email, pwd, newPwd):
     db = get_db()
@@ -117,6 +108,27 @@ def get_email(token):
     cursor = db.cursor()
     try:
         request = cursor.execute('SELECT email FROM loggedIn WHERE token=?', (token,))
+        return request.fetchone()
+    except sqlite3.Error:
+        return False
+
+#Get data of a user in the database from its token
+def get_user_data_by_token(token):
+    db = get_db()
+    cursor = db.cursor()
+    mail = get_email(token)
+    try:
+        request = cursor.execute('SELECT email,firstname,familyname,gender,city,country FROM users WHERE email=?', (mail[0],))
+        return request.fetchone()
+    except sqlite3.Error:
+        return False
+
+#Get data of a user in the database from its token
+def get_user_data_by_email(email):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        request = cursor.execute('SELECT email,firstname,familyname,gender,city,country FROM users WHERE email=?', (email,))
         return request.fetchone()
     except sqlite3.Error:
         return False
