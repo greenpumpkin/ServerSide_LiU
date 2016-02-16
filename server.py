@@ -41,6 +41,8 @@ def sign_up():
         signUp = database_helper.insert_user(email, password, firstname, familyname, gender, city, country)
         if signUp:
             return json.dumps({"success": True, "message": "Successfully created a new user."})
+        else:
+            return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
     else:
         return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
 
