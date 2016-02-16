@@ -33,7 +33,7 @@ def sign_up():
     gender = request.form['gender']
     city = request.form['city']
     country = request.form['country']
-    
+
     if (database_helper.check_email(email) == True) and len(password) >= 6 \
             and (database_helper.check_gender(gender))\
             and len(firstname) > 0 and len(familyname) > 0\
@@ -41,8 +41,8 @@ def sign_up():
         signUp = database_helper.insert_user(email, password, firstname, familyname, gender, city, country)
         if signUp:
             return json.dumps({"success": True, "message": "Successfully created a new user."})
-        else:
-            return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
+    else:
+        return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
 
 # Authenticates the username by the provided password
 @app.route('/signin', methods=['POST'])
