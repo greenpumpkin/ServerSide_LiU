@@ -34,11 +34,13 @@ def sign_up():
     city = request.form['city']
     country = request.form['country']
     signUp = database_helper.insert_user(email, password, firstname, familyname, gender, city, country)
-    if signUp:
+    if signUp and (database_helper.check_email(email) == True) and len(password) >= 6 \
+            and (database_helper.check_gender(gender))\
+            and len(firstname) > 0 and len(familyname) > 0\
+            and len(city) > 0 and len(country) >0:
         return json.dumps({"success": True, "message": "Successfully created a new user."})
     else:
         return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
-
 
 # Authenticates the username by the provided password
 @app.route('/signin', methods=['POST'])
@@ -159,4 +161,4 @@ def get_user_messages_by_email(token,email):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # database_helper.init_db(app)
+    #database_helper.init_db(app)

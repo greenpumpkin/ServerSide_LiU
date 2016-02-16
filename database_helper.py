@@ -1,4 +1,5 @@
 import sqlite3
+import re
 from flask import g
 
 DATABASE = 'database.db'
@@ -38,6 +39,15 @@ def sign_in_db(email, password):
     except sqlite3.Error:
         return False
 
+#Checks if an email address is valid
+def check_email(email):
+    if re.match(r"[^@]+@[^@]+\.[^@]+",email):
+        return True
+    return False
+
+#Checks if the gender is valid
+def check_gender(gender):
+    return gender == 'male' or gender == 'female'
 
 # Inserts a user in the database when signing up
 def insert_user(email, password, firstname, familyname, gender, city, country):
@@ -45,7 +55,7 @@ def insert_user(email, password, firstname, familyname, gender, city, country):
     user = (email, password, firstname, familyname, gender, city, country)
     try:
         db.execute('INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)', user)
-    except:
+    except sqlite3.Error:
         return False
     db.commit()
     return True
